@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "electron ."
+    "start": "electron --no-sandbox ."
   },
-  "author": "",
+  "author": "Kingston Steele, Mark van der Pol",
   "license": "ISC",
   "devDependencies": {
     "electron": "^12.0.2"

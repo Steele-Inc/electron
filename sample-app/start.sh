@@ -6,4 +6,4 @@ export BALENAELECTRONJS_SLEEP_BUTTON_POSITION=20,13
 export BALENAELECTRONJS_WIFI_BUTTON_POSITION=114,13
 export BALENAELECTRONJS_ZOOM_FACTOR=1.5
 export BALENAELECTRONJS_BRIGHTNESS_FILTER=0.5
-./node_modules/.bin/electron -r .. index.js
+./node_modules/.bin/electron -r .. index.js --no-sandbox

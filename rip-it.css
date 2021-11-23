@@ -1,0 +1,636 @@
+:root {
+  --keycap:#1f1e1e;
+  --keylegend: white;
+  --keylegendoff: #909194 ;
+  --keylowlight:#504f4f;
+  --keyhighlight: #3a3a3a;
+  --panel-bg: #101010;
+  --panel-brd:  #505050;
+  --blue-button: #0084ff94;
+  --blue-select: #21A4E3;  
+  --display: var(--keycap);
+  --panelbutton_bg: #3e68ff;
+  --panelbutton_ok: green;
+  --panelbutton_fg: white;
+  --panelbutton_off_fg: #697fbd ;
+  --panelbutton_off_bg: #1b2c69;
+  --caution_text: yellow;
+  --caution_bg: firebrick;
+  --caution_ok: green;
+  --dialog_bg: #15141A;
+  --dialog_text: white;
+  --button_border: solid 6px #707070;
+}
+
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-family: sans-serif;
+  text-shadow: 3px 3px rgba(1,1,1,.1);
+  color:white;
+/*  cursor:none; */
+}
+::selection { 
+  color: white; 
+  text-shadow: 3px 3px rgba(1,1,1,.1);
+  background-color: transparent ;
+}
+/* Component Needs */
+
+.container > input {
+  display: none; 
+}
+.container main > div {
+  display: none; 
+  height:100vh;
+}
+
+#tab7:checked ~ main .tab7,
+#tab6:checked ~ main .tab6,
+#tab5:checked ~ main .tab5,
+#tab4:checked ~ main .tab4,
+#tab3:checked ~ main .tab3,
+#tab2:checked ~ main .tab2,
+#tab1:checked ~ main .tab1 {
+   display: grid;
+}
+
+#tab7:checked ~ nav .tab7 label,
+#tab6:checked ~ nav .tab6 label,
+#tab5:checked ~ nav .tab5 label,
+#tab4:checked ~ nav .tab4 label,
+#tab3:checked ~ nav .tab3 label, 
+#tab2:checked ~ nav .tab2 label, 
+#tab1:checked ~ nav .tab1 label  {
+    background: white;
+    color: #111;
+    position: relative;
+}
+
+#tab7:checked ~ nav .tab7 label:after ,
+#tab6:checked ~ nav .tab6 label:after ,
+#tab5:checked ~ nav .tab5 label:after ,
+#tab4:checked ~ nav .tab4 label:after ,
+#tab3:checked ~ nav .tab3 label:after ,
+#tab2:checked ~ nav .tab2 label:after , 
+#tab1:checked ~ nav .tab1 label:after  
+    {
+      content: '';
+      display: block;
+      position: absolute;
+      height: 2px;
+      width: 100%;
+      background: #ffffff;
+      left: 0;
+      bottom: -1px;
+    }
+/* Handle showing/hiding STOP at the CSS level for speed
+  The check box runmode controls this. When runmode-run is checked,
+  normal buttons show. When runmode is runmode-stop, normal buttons
+  hide, and STOP is shown. */
+#runmode-stop:checked ~ main label.runmode-stop-dim button {
+  color: var(--keylegendoff) ;
+}
+#runmode-stop:checked ~ main div.runmode-stop-hide {
+  display:none;
+}
+#runmode-stop:checked ~ main div.runmode-stop-show {
+  display:grid;
+}
+
+label button { /* for some reason, labels don't automatically expand into space. */
+  width:100%;
+  height:100%;
+}
+.container { 
+/*  width: 100%;
+  max-width: 700px; */
+  margin: 0 auto; 
+}
+.container nav  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.container  nav ul    li  label {
+        float:left;
+        padding: 15px 12px;
+        border: 1px solid #ddd;
+        border-bottom: 0;
+        background: var(--panel-bg);
+        color: #444;
+        font-size: 3vw;
+        height: 23vw;
+        width:7vw;
+        text-align: center;
+        writing-mode: vertical-lr;
+}
+.container nav  ul    li  label:hover {
+          background: #dddddd;
+        }
+.container  nav ul    li  label:active {
+          background: #ffffff;
+      }
+.container  nav  ul    li :not(:last-child) label {
+         border-right-width: 0; 
+      }
+
+/***
+Pop-up / dropdown menu stuff
+***/
+.dropdown {
+  grid-area:dd;
+  float: left top;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 16px;  
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  font-size: 7vw;;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content li {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+.dropdown-content li label {
+  color: black;
+}
+
+.dropdown-content label:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+/** end dropdown menu stuff **/
+
+body {
+  margin:0vh;
+  background-color: black;
+}
+
+.container {
+  display: grid;
+  grid-template-areas:
+        "main";
+
+  grid-template-rows: auto  auto;
+  height: 96vh;
+}
+
+.units  input {
+  display: none; 
+}
+.units  ul {
+  list-style: none;
+}
+
+.units ul  label {
+  display:none
+}
+
+[name="blade"] {
+  display:none;
+} 
+.button-bar {
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+} 
+.button-bar button {
+  width:100%;
+  padding : 0 0;  /* override padding for genreal buttons. */
+  background-color: var(--panel-bg);
+}
+.button-bar button label {
+  padding:2vh 17vw;  /* AS buttons with labels in them use the padding area as the action area. */
+}
+/* for button bars, these allow you to specify double width buttons*/
+.button-1 {
+  flex-grow: 1;
+}
+ .button-2 {
+  flex-grow: 2;
+}
+
+#blade-right:checked ~ main .button-bar .blade-right-btn ,
+#blade-left:checked ~ main .button-bar .blade-left-btn 
+{
+  border: 5px solid var(--blue-select);
+}
+
+/*  Here the height of the AutoHome control bar on the startup screen is set.*/
+#JogAutoHome button,
+#settingAuoHome {
+  height: 15vh;
+}
+
+.Button-Select ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  padding-inline-start:0;
+ }
+ .Button-Select li  {
+  padding:2vh 0;
+ }
+ .Button-Select label {
+  padding:2vh 7.5vw;
+ }
+
+#unitmm:checked ~ main #unitsSel .unitmm label ,
+#unitcm:checked ~ main #unitsSel  .unitcm label ,
+#unitin:checked ~ main #unitsSel  .unitin label ,
+#unitfrac:checked ~ main #unitsSel  .unitfrac label  {
+  display:inline;
+  font-size: 7vw;
+}
+#unitmm:checked ~ main .unitsSelButtons .unitmm  ,
+#unitcm:checked ~ main .unitsSelButtons .unitcm  ,
+#unitin:checked ~ main .unitsSelButtons .unitin  ,
+#unitfrac:checked ~ main .unitsSelButtons .unitfrac   {
+  border: 5px solid var(--blue-select);
+}
+
+.slider {
+ width: 100%;
+}
+input[tall-range] {
+  height: 20vh;
+  -webkit-appearance: none;
+  margin: 10px 0;
+  width: 100%;
+}
+input[tall-range]:focus {
+  outline: none;
+}
+input[tall-range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 16vh;
+  box-shadow: 1px 1px 1px #000000;
+  background: #115D85;
+  border-radius: 5px;
+  border: 1px solid #000000;
+}
+input[tall-range]::-webkit-slider-thumb {
+  box-shadow: 1px 1px 1px #000000;
+  border: 1px solid #000000;
+  height: 18vh;
+  width: 14px;
+  border-radius: 4px;
+  background: #FFFFFF;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -1vh;
+}
+
+
+nav {
+  grid-area: nav;
+  z-index: 99;
+  background: #494949;
+}
+
+main {
+  background-color:  var(--panel-bg);
+  grid-area: main;
+}
+
+.keypad {
+  height:100%;
+  display:grid;
+  grid-template-columns: repeat(4,1fr);
+  grid-template-rows:  repeat(9, 1fr);
+  grid-template-areas:
+  "da da da da"
+  "da da da da"
+  "mk mk mk cl"
+  "dk dk dk dk"
+  "dk dk dk dk"
+  "dk dk dk dk"
+  "dk dk dk dk"
+  "va va va va"  
+  "va va va va";
+  gap:25px;
+  /* background-color: green; */
+}
+
+.display {
+  grid-area: da;
+  border-radius: 12px;
+  background: var(--display);
+  border:5px solid var(--panel-brd);
+  display: grid;
+  grid-template-columns:1fr 12fr 2fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+  "dd tg al"
+  "uu ps un";
+}
+.readout {
+  text-align: center;
+  display: flex;
+  padding:2vw 0 ;
+  flex-direction:column;
+  align-items: center; 
+  font-size: 10vw;
+}
+.current-position {
+  grid-area: tg;
+}
+
+.next-position {
+  grid-area: ps;
+  font-size: 8vw;
+}
+
+.homed {
+grid-area:al;
+display:flex;
+padding-left:45px;
+}
+.units {
+  grid-area:un;
+  display:flex;
+  text-align:center;
+}
+.special-functions { 
+ /* background-color: green; */
+  grid-area:va;
+}
+.entry-mode { 
+  grid-area: va;
+  display: grid;
+  grid-template-areas: 
+    "lj en en rj";
+  gap:25px;
+  height:18vh;
+}
+
+#jog-left { grid-area:lj; }
+
+#jog-right { grid-area:rj; }
+
+button.green-button {
+  background-color: #00ff2670;
+  border-color: #00ff00;
+}
+button.blue-button {
+  background-color: var(--blue-button);
+  border-color: var(--blue-select);
+}
+
+#enter {
+  grid-area: en;
+  display: flex;
+  align-items: center; 
+  flex-direction:column;
+}
+.run-mode[hidden] {
+  display:none;
+}
+.run-mode {
+  grid-area:va; 
+  display: flex;
+  align-items: center; 
+  flex-direction:column;
+}
+#all-stop {
+  background-color: rgba(255, 0, 0, 0.678); 
+  border-color: red;
+  padding:5vh 3vw;
+  display:flex;
+  align-items: center; 
+  flex-direction:column;
+  width:100%;
+}
+
+#delete {
+  grid-area: cl;
+  background-color: #ff453a;
+}
+
+#clear {
+  grid-area: ac;
+  background-color: #ff453a;
+}
+
+#clear:hover {
+  box-shadow: 
+    inset -9px 9px 17px #e33d34, 
+    inset 9px -9px 17px #ff4d40;
+}
+
+#delete:active , #clear:active {
+  transform: translate(4px, 4px);
+  box-shadow: inset -9px 9px 17px #aa1010, 
+              inset 9px -9px 17px #f36b6b;
+}
+.number-frac {
+  font-size: 4.5vw;
+}
+button {
+  outline: none;
+  border-radius: 12px;
+  border:5px solid var(--panel-brd);
+  background: var(--keycap);
+}
+
+.Button-Select li ,
+.button-bar button {
+  outline: none;
+  border-radius: 12px;
+  /* border: 2px solid grey; */
+}
+.keypad button {
+font-size: 8vw;
+}
+
+.Button-Select li ,
+.button-bar div{
+  margin:0.5vw;
+}
+.keypad button:active  {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+.keypad button:disabled {
+  color: var(--keylegendoff) }
+
+  /* This stuff for a warning triangle */
+.warn,
+.warn::before,
+.warn::after
+{
+  position: relative;
+  padding: 0;
+  margin: 0;
+}
+
+.warn {
+  font-size:96px;
+  color: transparent;
+}
+
+.warn.warning {
+  display: inline-block;
+  top: 0.225em;
+  width: 1.15em;
+  height: 1.15em;
+  overflow: hidden;
+  border: none;
+  background-color: transparent;
+  border-radius: 0.625em;
+}
+
+.warn.warning::before {
+  content: "";
+  display: block;
+  top: -0.08em;
+  left: 0.0em;
+  position: absolute;
+  border: transparent 0.6em solid;
+  border-bottom-color: #fd3;
+  border-bottom-width: 1em;
+  border-top-width: 0;
+  box-shadow: #999 0 1px 1px;
+}
+
+.warn.warning::after {
+  display: block;
+  position: absolute;
+  top: 0.3em;
+  left: 0;
+  width: 100%;
+  padding: 0 1px;
+  text-align: center;
+
+  content: "!";
+  font-size: 0.65em;
+  font-weight: bold;
+  color: #333;
+}
+/* Stuff for the other panels */
+/* General - give it some breathing room around the edges */
+.panel {
+  padding:1vw;
+}
+
+.panel p ,
+.panel ul {
+    font-size: 4vw;
+    margin-bottom : 3px;
+}
+
+.panel h1 {
+  margin-bottom : 1vw;
+  font-size: 5vw;
+  text-align: center;
+}
+.panel-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
+.panel-button , .warning-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--panelbutton_bg);
+  color: var(--panelbutton_fg);
+  border-radius: 8px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+  padding: 0.25em 0.75em;
+  font-size: 3vw;
+}
+
+.panel-button:disabled {
+  color: var(--panelbutton_off_fg);
+  background-color: var(--panelbutton_off_bg);
+}
+/*
+#settings-panel h1 {
+  font-size: 5vw;
+  text-align: center;
+}
+*/
+#settings-panel [type="range"] {
+  width : 80%
+}
+#settings-panel p {
+  font-size: 4vw;
+}
+#tunings-panel span {
+  font-size: 4vw; 
+  display : flex;
+  padding:1vw;
+}  
+#tunings-panel div {
+  font-size: 4vw; 
+  flex: 25%;
+}  
+.range-slider__value {
+  font-size: 5vw;
+  width: 10vw;
+  text-align: right;
+}
+.range-slider__range {
+  font-size: 5vw;
+  border: 2px solid #444444;
+  outline: none;
+  background-color: #15141A;
+}
+#about-panel h1 {
+  font-size: 5vw;
+  text-align: center;
+}
+
+.panel .Caution {
+  font-size: 4vw;
+  color:var(--caution_text);
+}
+
+dialog  {
+  color: red;
+  background-color: #15141A;
+}
+dialog h1 {
+  margin-bottom : 1vw;
+  font-size: 5vw;
+  text-align: center;
+}
+dialog div {
+  font-size: 4vw;
+  margin-bottom : 3px;
+}
+dialog::backdrop {
+  backdrop-filter: blur(3px);
+}
+table, th, td {
+  text-align: center;
+  background-color: var(--caution_bg);
+}

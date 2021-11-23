@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline'">
+    <title>Rip-it</title>
+    <link rel="stylesheet" type="text/css" href="rip-it.css">
+    <!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"-->
+    <script>var unlock=0; var active=0;</script>
+  </head>
+  <body>
+    <div class="container">
+      <input id="tab1" type="radio" name="pct" />
+      <input id="tab2" type="radio" name="pct" />
+      <input id="tab3" type="radio" name="pct" />
+      <input id="tab4" type="radio" name="pct" />
+      <input id="tab5" type="radio" name="pct" />
+      <input id="tab6" type="radio" name="pct" checked="true"/>
+      <input id="tab7" type="radio" name="pct" />
+
+      <input  id="blade-left" type="radio" name="blade" />
+      <input  checked="true" id="blade-right" type="radio" name="blade" />
+
+      <input id="runmode-run" checked="true" type="radio" name="runmode"/>
+      <input id="runmode-stop" type="radio" name="runmode"/>
+
+      <nav hidden >
+        <!-- Navigation -->
+        <ul>
+          <li class="tab1">
+            <label for="tab1">Keypad</label>
+          </li>
+          <li class="tab5">
+            <label for="tab5">Homing</label>
+          </li>
+           <li class="tab2" dev-mode hidden >
+            <label for="tab2">Tuning</label>
+          </li>
+          <li class="tab3" dev-mode hidden >
+            <label for="tab3">Parameters</label>
+          </li>
+          <li class="tab4">
+            <label for="tab4">About</label>
+          </li>
+          <li class="tab7">
+            <label for="tab7">Settings</label>
+          </li>
+
+        </ul>
+      </nav>
+
+      <input id="unitmm"  type="radio" name="units" value="mm" />
+      <input id="unitcm"  type="radio" name="units" value="cm"  />
+      <input id="unitin"  type="radio" name="units" value=".in" />
+      <input id="unitfrac" type="radio" name="units" value="/in"/>
+      <input id="current_units" style="display:none"; value=".in" />
+      <main>
+        <div class="keypad tab1" >
+
+          <div class="display">
+            <div class="dropdown">
+              <button class="dropbtn">=<i class="fa fa-align-justify"></i>
+              </button>
+              <div class="dropdown-content">
+                <li class="tab5">
+                  <label for="tab5">Homing</label>
+                </li>
+                 <li class="tab2" dev-mode hidden >
+                  <label for="tab2">Tuning</label>
+                </li>
+                <li class="tab3" dev-mode hidden>
+                  <label for="tab3" >Parameters</label>
+                </li>
+                <li class="tab4">
+                  <label for="tab4">About</label>
+                </li>
+                <li class="tab7">
+                  <label for="tab7">Settings</label>
+                </li> 
+             </div>
+            </div> 
+            <div data-current-position class=" readout current-position"></div>
+            <div data-next-position class="readout next-position"></div>
+            <input units="inches" id="actual-position" type="hidden" />
+            <div class="indicators homed"   ><div  id="homed-flag"  onclick="document.querySelector('#tab5').checked=true;" ><span class="warn warning" \></span></div></div>
+            <div class="indicators units">
+
+
+              <!-- current_units is used by the JavaScript to -->
+
+              <ul id="unitsSel"> 
+                <!-- NOTE: the label's class is what they ARE but the 'for' attribute points to the NEXT one in the cycle.
+                     The effect is that as only the currently selected radio is shown, when it's label is clicked, it identifies the next
+                    one to check, which is then shwon, as expected. But when clicked, again, the next in the sequence is checked.
+                    Take care to wrap from the end to the beginning.
+                    CAUTION: The different units are handled by working with the RATIO of this unit to the NEXT one selected, in the code
+                    Thus the ratio of going from mm to cm is 0.1, cm to in is  0.393700787401575, and in to mm 25.4  this is coded in the
+                  JavaScript, so changing the order of units here will mess with the assumptions in the JavaScript.-->
+                <li class="unitmm"><label for="unitcm" >mm<br/></label></li>
+                <li class="unitcm"><label for="unitin" >cm<br/></label></li>
+                <li class="unitin"><label for="unitfrac" >.in<br/></label></li>
+                <li class="unitfrac"><label for="unitmm" >/in<br/></label></li>
+            </ul>
+
+          </div>
+        </div>
+          <label class="runmode-stop-dim" for="runmode-stop" ><button value="1" memory-key class="mem-key">M1</button></label>
+          <label class="runmode-stop-dim" for="runmode-stop" ><button value="5" memory-key class="mem-key">M2</button></label>
+          <label class="runmode-stop-dim" for="runmode-stop" ><button value="10" memory-key class="mem-key">M3</button></label>
+          <button data-delete id="delete" >
+            <svg width="80%" height="80%" viewBox="0 -1 16 16" class="bi bi-backspace-fill" fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M15.683 3a2 2 0 0 0-2-2h-7.08a2 2 0 0 0-1.519.698L.241 7.35a1 1 0 0 0 0 1.302l4.843 5.65A2 2 0 0 0 6.603 15h7.08a2 2 0 0 0 2-2V3zM5.829 5.854a.5.5 0 1 1 .707-.708l2.147 2.147 2.146-2.147a.5.5 0 1 1 .707.708L9.39 8l2.146 2.146a.5.5 0 0 1-.707.708L8.683 8.707l-2.147 2.147a.5.5 0 0 1-.707-.708L7.976 8 5.829 5.854z" />
+            </svg>
+          </button>
+
+          <!-- button value="4" memory-key class="mem-key">M4</button -->
+          <button value="1" data-number class="number-key">1</button>
+          <button value="2" data-number class="number-key">2</button>
+          <button value="3" data-number class="number-key">3</button>
+          <button value=".5" frac-number class="number-frac">/2</button>
+          <button value="4" data-number class="number-key">4</button>
+          <button value="5" data-number class="number-key">5</button>
+          <button value="6" data-number class="number-key">6</button>
+          <button value=".25" frac-number class="number-frac">/4</button>
+          <button value="7" data-number class="number-key">7</button>
+          <button value="8" data-number class="number-key">8</button>
+          <button value="9" data-number class="number-key">9</button>
+          <button value=".125" frac-number class="number-frac">/8</button>
+          <button value="." data-number decimal-point class="number-key">.</button>
+          <button value="0" data-number class="number-key">0</button>
+          <button value=".03125" frac-number class="number-frac">/32</button>
+          <button value=".0625" frac-number class="number-frac">/16</button>
+
+          <!-- <button data-stop class="span-two-col stop">STOP/AC</button> -->
+          <div class="special-functions" >
+            <div  class="entry-mode stop-mode runmode-stop-hide"  >
+              <label id="jog-left" for="runmode-stop" ><button value="-0.015625" data-operation class="jog-left blue-button">&lt;</button></label>
+              <label id="enter" for="runmode-stop" ><button data-enter  class="move-button green-button">Move</button></label>
+              <label id="jog-right" for="runmode-stop" ><button value="0.015625" data-operation class="jog-right blue-button">&gt;</button></label>
+            </div>
+            <div hidden class="runmode-stop-show" >
+              <label for="runmode-run" ><button   all-stop id='all-stop' class="all-stop"></label>
+               STOP
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div  dev-mode  hidden class="panel tab2 " id="settings-panel">
+      <!--
+        Show the help hint (title) when the mouse hoovers.
+        -->
+        <div class="menu-back>"><label for="tab1">&lt;Keypad</label></div>
+        <h1>Motion Settings</h1>
+      <p>Max Velocity</p>
+      <div class="range-slider">
+        <input class="range-slider__range" type="range" value="3123" min="0" max="8000"
+        title="This sets the maximum speed the fence will move at." reset="2000">
+        <input id="max-velocity" type="hidden" />
+        <span class="range-slider__value">200</span>
+      </div>
+      <p>Initial Velocity</p>
+        <div class="range-slider">
+          <input class="range-slider__range" type="range" value="50" min="0" max="1000"
+          title="Sets the velocity at which the fence will switch between acceleration settings." reset="100">
+          <input id="init-velocity" type="hidden" />
+          <span class="range-slider__value">50</span>
+        </div>
+       <p>Max Acceleration</p>
+      <div class="range-slider">
+        <input class="range-slider__range" type="range" value="6500" min="0" max="6500" reset="3500"
+        title="This sets the acceleration the fence will use to attain Maximum velocity, once it has reached initial velocity.">
+        <input id="max-acceleration" type="hidden" />
+        <span class="range-slider__value">50</span>
+      </div>
+      <p>Max Deceleration</p>
+      <div class="range-slider">
+        <input class="range-slider__range" type="range" value="6500" min="0" max="6500" reset="5500"
+        title="This sets the deceleration the fence will use to slow from Maximum velocity to terminal velocity.">
+        <input id="max-deceleration" type="hidden" />
+        <span class="range-slider__value">70</span>
+      </div>
+      <p>Initial Acceleration</p>
+      <div class="range-slider">
+        <input class="range-slider__range" type="range" value="6500" min="0" max="6500"reset="3500"
+        title="Sets the acceleration the fence uses when starting to move. Much torque is avaialbe, so can be higher at lower speeds.">
+        <input id="init-acceleration" type="hidden" />
+        <span class="range-slider__value">100</span>
+      </div>
+  
+      <p>Terminal Deceleration</p>
+      <div class="range-slider">
+        <input class="range-slider__range" type="range" value="16000" min="0" max="28000" reset="35000"
+        title="Sets the deceleration the fence uses when slowing to a full-stop. Can use higher values as more torque is available at lower speeds.">
+        <input id="term-deceleration" type="hidden" />
+        <span class="range-slider__value">140</span>
+      </div>
+      <h1>Motor Settings</h1>
+      <p>Current Limit</p>
+      <div class="range-slider">
+        <input class="range-slider__range" type="range" value="28" min="0" max="31" step="1" reset="16"
+        title="Controls the maximum current drive, in steps of 1/32 of maximum avaialbe. Note that overheating and thermal shut-down will occur if too high a setting is used.">
+        <input id="current-limit" type="hidden" />
+        <span class="range-slider__value">16</span>
+      </div>
+      <div class="panel-control" id="settings-control">
+        <input id="settings-apply" class="panel-button panel-apply" type="button" 
+        value="Apply" disabled  \>
+        <input id="settings-revert" class="panel-button panel-revert" type="button" 
+        value="Revert"  \>
+        <input id="settings-save" class="panel-button panel-save" type="button" 
+        value="Save" disabled \>
+        <input id="settings-load" class="panel-button panel-load" type="button" 
+        value="Load"  \>
+        <input id="settings-reset" class="panel-button panel-reset" type="button" 
+        value="Reset"  \>
+        <input id="settings-dirty" class="panel-button panel-dirty" type="hidden" 
+        value=false  \>
+      </div>
+    </div>
+    <div dev-mode  hidden class="panel tab3" id="tunings-panel">
+      <div class="menu-back>"><label for="tab1">&lt;Keypad</label></div>
+      <!-- div hidden>
+      <h1>Parametric Tuning</h1>
+      <span><div>TPowerDown</div>
+        <div class="range-slider">
+          <input class="range-slider__range" type="number"  value="10" min="0" max="255" reset="10"
+          title="TPOWERDOWN sets the delay time after the stand still (stst) of the motor to motor current power down. Time range is about 0 to 4 seconds.">
+          <input id="tmc_tpowerdown" type="hidden" />
+        </div>
+        </span>
+        <span><div>TPWMThrs</div>
+          <div class="range-slider">
+            <input class="range-slider__range"  type="number"  value="500" min="0" max="1048575"  reset="500"
+            title="This is the upper velocity for StealthChop voltage PWM mode. TSTEP >= TPWMThrs - StealthChop PWM mode enabled, DCStep is disabled.">
+            <input id="tmc_tpwmthrs" type="hidden" />
+          </div>
+        </span>
+         <span><div>TCoolThrs</div>
+          <div class="range-slider">
+            <input class="range-slider__range" type="number"  value="500" min="0" max="1048575"  reset="500"
+             title="This is the lower threshold velocity for switching on smart energy CoolStep and StallGuard.">
+            <input id="tmc_tcoolthrs" type="hidden" />
+          </div>
+        </span>
+          <span><div>THigh</div>
+            <div class="range-slider">
+              <input class="range-slider__range" type="number"  value="500" min="0" max="1048575"  reset="500"
+              title="This velocity setting allows velocity dependent switching into a different chopper mode and fullstepping to maximize torque.">
+              <input id="tmc_thigh" type="hidden" />
+            </div>
+          </span>
+          <span><div>SGT</div>
+            <div class="range-slider">
+              <input class="range-slider__range" type="number"  value="0" min="-64" max="63"  reset="0"
+              title="StallGuard2 threshold value. Signed value controls the level for stall output and sets the optimum measurement range for readout. A higher value makes StallGuard2 less sensitive and requires more torque to indicate a stall.">
+              <input id="sgt" type="hidden" />
+            </div>
+          </span>
+
+        </div -->
+        <div id='table_paramerters'>
+          <h1>Table Limits</h1>
+          <span><div>Max Travel</div>
+            <div class="range-slider">
+              <input units="inches" class="range-slider__range" type="number"  value="400" min="0" max="1000"  reset="600"
+              title="The maximum absolute extend of travel. Default in 0.1 inches">
+              <input units="inches" id="travel_max" type="hidden" />
+            </div>
+          </span>
+          <span><div>Auto-Home Travel</div>
+            <div class="range-slider">
+              <input units="inches" class="range-slider__range" type="number"  value="100" min="30" max="800"  reset="100"
+              title="The maximum distance Auto-Home will try to seek home. 10 default (in 0.1 inches)">
+              <input units="inches" id="auto_home_max" type="hidden" />
+            </div>
+          </span>
+          <br/>
+
+        </div>
+          <div class="panel-control" id="tunings-control">
+          <input id="tunings-apply" class="panel-button panel-apply" type="button" 
+          value="Apply" disabled \>
+          <input id="tunings-revert" class="panel-button panel-revert" type="button" 
+          value="Revert" \>
+          <input id="tunings-save" class="panel-button panel-save" type="button" 
+          value="Save" disabled \>
+          <input id="tunings-load" class="panel-button panel-load" type="button" 
+          value="Load"  \>
+          <input id="tunings-reset" class="panel-button panel-reset" type="button" 
+          value="Reset"  \>
+          <input id="tunings-dirty" class="panel-button panel-dirty" type="hidden" 
+          value=false  \>
+            </div>
+    </div>
+    <div  class="panel tab4" id="about-panel">
+      <div class="menu-back>"><label for="tab1">&lt;Keypad</label></div>
+      <!--  Hack to allow Startup screen to be accessed again ... make the About header a touch area to go to startup screen -->
+        <h1><label for="tab6">About</label></h1>
+      <p><b  onclick="document.querySelectorAll('[dev-mode]').forEach( item => { item.hidden= unlock!=5 });unlock=0;">Jeff Hadaway</b> : <span onclick="unlock=1;">Inventor</span></p>
+      <p><b onclick="unlock=unlock==3?4:0;" >Kingston Steele</b> : <span  onclick="unlock=unlock==4?5:0;">Industrial Design</span></p>
+      <p><b  onclick="unlock=unlock==1?2:0;">Mark van der Pol</b> : <span onclick="unlock=unlock==2?3:0;">Software Engineering</span></p>
+      <h1>Driver ASIC Parameters</h1>
+      <p>Chip version : <span id="ChipVersion">Unk</span></p>
+      <div>
+        <br/>
+        <hr>
+        <h1>Demo Mode</h1>
+        <p>A simple demo loop can be started where the fence moves to memory postions in sequence, with a few seconds delay at each position.</p>
+        <ul>
+          <button class="demo-button panel-button" >Run Demo Mode</button>
+        </ul>
+      </div>
+    </div>
+
+    <div  class="panel tab5" id="homing-panel">
+      <div class="menu-back>"><label for="tab1">&lt;Keypad</label></div>
+      <h1>Homing and Calibration</h1>
+      <div><table>
+        <tr>
+          <td><span class="warn warning" \></td>
+            <td><span class="Caution" >Before full speed and full power operation is enabled, the following homing procedure must be followed.</span></td></tr>
+      </table></div>
+        <p>Move the fence to (or close to) the desired HOME or Zero position using one of -</p>
+          <ul>
+            <li>use the jog buttons & normal movement operations on the keypad.</li>
+             - or - <br/>
+            <li>manually move the fence - it is disengaged</li>
+          </ul><p>Then -</p> 
+          <ul>
+            <li>use Auto-Home (within 10" of the left stop)</li>
+            - or -<br/>
+            <li>press Manual ZERO to set the current position as the new Zero or HOME position.</li>
+          </ul>
+        <p>
+        In this mode the fence will move slowly, 
+        and with about 10% power so will readily stop when encountering resistance or hand pressure.<br/>
+        If Auto-Home fails, use the Manual Zero button once the desired position is acheived. <br\>
+        This sets that position as the left most travel of the fence, and is the Zero reference point. 
+      </p>
+      <p>To recalibrate or reset the home position, Disengage the drive, then repeat the above procedure to set the new home position.</p>
+     <div class="panel-control" id="homing-control">
+        <input id="homing-zero" class="panel-button" type="button" 
+        value="Manual ZERO" \>
+        <input id="disengage" class="panel-button" type="button" 
+        value="Disengage Drive" disabled \>
+        <input id="auto-homing" class="panel-button" type="button" 
+        value="Auto Home" \>
+      </div>
+    </div>
+    <div  class="panel tab6" id="startup-panel">
+      <h1>Startup</h1>
+      <hr  style="border: 2px solid grey; margin: 10px;" />
+      <div class="Button-Select">
+        <h2>Units</h2>
+        <ul class="unitsSelButtons"> 
+          <!-- button-1 and button-2 classes cause element in the collection to be 
+            flex-sized (grow)  at 1 or 2 - that is equally distributed among all of them
+            with button-2 taking twice the width a button-1 uses.  -->
+          <li class="unitmm button-1"><label for="unitmm">mm</label></li>
+          <li class="unitcm button-1"><label for="unitcm">cm</label></li>
+          <li class="unitin button-1"><label for="unitin">.in</label></li>
+          <li class="unitfrac button-1"><label for="unitfrac">/in</label></li>
+      </ul>
+      </div>
+      <h2>Travel Limits</h2>
+          <div class="range-slider"  same_as="travel_limits" style="position:relative;">
+            <input units="inches" class="range-slider__range" tall-range type="range"  value="400" min="0" max="1000"  reset="600"
+            title="The maximum absolute extend of travel. Default in 0.1 inches">
+            <input units="inches" id="startup_travel_max" type="hidden" />
+            <span class="range-slider__value" style="position:absolute;top:9vh;right:5vw;">50</span>
+        </div>
+        <div id="blade-input">
+          <h2>Side of Blade</h2>  
+
+          <div class="button-bar" >
+            <div class="button-1">
+              <button  class="blade-left-btn panel-button button-1" type="button" value="Left" ><label for="blade-left">Left</label></button>
+            </div>
+            <div class="button-1">
+              <button class="blade-right-btn panel-button button-1" type="button" value="Right" ><label for="blade-right">Right</label></button>
+            </div>
+          </div>
+        </div>
+        <br/>
+        <div id="JogAutoHome">
+          <div class="button-bar">
+            <div class="jog  button-1">
+              <button data-operation class='jog jog-left panel-button blue-button' type="button">
+                <span>&lt; Jog</span>
+                </button>
+            </div>
+            <div class = "button-2">
+              <button id="startupAuoHome" class="panel-button button-AutoHome green-button"  type="button" >Auto Home</button>
+            </div>
+            <div class="jog  button-1">
+              <button data-operation class='jog jog-right panel-button blue-button'  type="button">
+                <span>Jog &gt;</span>
+                </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div  class="panel tab7" id="new-settings-panel">
+        <div class="menu-back>"><label for="tab1">&lt;Keypad</label></div>
+        <div>
+        <h1>Settings</h1>
+        <hr  style="border: 2px solid grey; margin: 10px;" />
+        <div class="Button-Select">
+          <h2>Units</h2>
+          <ul class="unitsSelButtons"> 
+            <!-- button-1 and button-2 classes cause element in the collection to be 
+              flex-sized (grow)  at 1 or 2 - that is equally distributed among all of them
+              with button-2 taking twice the width a button-1 uses.  -->
+            <li class="unitmm button-1"><label for="unitmm">mm</label></li>
+            <li class="unitcm button-1"><label for="unitcm">cm</label></li>
+            <li class="unitin button-1"><label for="unitin">.in</label></li>
+            <li class="unitfrac button-1"><label for="unitfrac">/in</label></li>
+        </ul>
+        </div>
+        <div id="blade-input">
+            <h2>Side of Blade</h2>  
+            <div class="button-bar" >
+              <div class="button-1">
+                <button  class="blade-left-btn panel-button button-1" type="button" value="Left" ><label for="blade-left">Left</label></button>
+              </div>
+              <div class="button-1">
+                <button class="blade-right-btn panel-button button-1" type="button" value="Right" ><label for="blade-right">Right</label></button>
+              </div>
+            </div>
+          </div>
+        <h2>Travel Limits</h2>
+            <div class="range-slider" same_as="travel_limits" style="position:relative;">
+              <input units="inches" class="range-slider__range" tall-range type="range"  value="400" min="0" max="1000"  reset="600"
+              title="The maximum absolute extend of travel. Default in 0.1 inches">
+              <input units="inches" id="settings_travel_max" type="hidden" />
+              <span class="range-slider__value" style="position:absolute;top:9vh;right:5vw;">50</span>
+          </div>
+          <br/>
+          <div id="system">
+            <h2>System</h2>  
+            <div class="button-bar" >
+              <div class="button-1">
+                <button id="wifi-btn" class="panel-button button-1" type="button" value="WiFi" ><label for="blade-left">WiFi</label></button>
+              </div>
+              <div class="button-1">
+                <button id="about-btn" class="panel-button button-1" type="button" value="About" ><label for="tab4">About</label></button>
+              </div>
+            </div>
+          </div>
+          <div id="AutoHome">
+            <div class="button-bar">
+              <div class = "button-2">
+                <button id="settingAuoHome" class="panel-button green-button button-AutoHome" type="button" >Auto Home</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  </main>
+  </div>
+  <dialog id="AutoHomeWarning" warning>
+    <div><h1>Performing AUTO-HOMING</h1>
+      The fence will move left to seek home.<br/>
+      Make sure the it is safe for the fance to move, and that there is between 4" to 9" of distance between the fence and the blade.<br/>
+      NOTE - the fence will run into the blade at low speed with low force to discover exacly where it is located. This establishes the zero reference point.
+      <p>Press OK to start AUTO-HOMING, or cancel to abort</p></div>
+    <ul>
+      <button class="warning-button" onclick="window.AutoHomeWarning.close('')">Cancel</button>
+      <button class="warning-button" onclick="window.AutoHomeWarning.close('OK')">OK</button>
+    </ul>
+  </dialog>
+  <dialog id="DisengageWarning" warning>
+    <div><h1>Disengaging the drive motor</h1>
+      Disengaging the drive will allow you to move the fence freely by pushing it. 
+      This will lose calibration and position. <br/>
+      While disengaged, the fence can be moved with the keypad, however, it will only be relatively accurate and move with reduced power and speed.<br/>
+      To re-engage the drive motor, use Manual ZERO or Auto Home, which will set the new zero position, and resume full speed and power operation.
+      <p>
+      Press OK to DISENGAGE the drive motor, or cancel to abort.</p>
+    </div>
+    <ul>
+      <button class="warning-button" onclick="window.DisengageWarning.close('')">Cancel</button>
+      <button class="warning-button" onclick="window.DisengageWarning.close('OK')">OK</button>
+    </ul>
+  </dialog>
+  <dialog id="ZeroWarning" warning>
+    <div><h1>Performing Manual Zero</h1>
+     The current position will be used as the Zero reference point, or Home. All future motion will be relative to this position.<br/>
+      <p>Press OK to set ZERO, or cancel to abort.</p></div>
+    <ul>
+      <button class="warning-button" onclick="window.ZeroWarning.close('')">Cancel</button>
+      <button class="warning-button" onclick="window.ZeroWarning.close('OK')">OK</button>
+    </ul>
+  </dialog>
+  <dialog id="LimitWarning" warning>
+    <div><h1>Travel Limit Warning</h1>
+      One of the travel limits set has been reached. Please keep the fence inside these limits.
+      <p>
+      The setting can be changed on the parameters tab - Press OK to continue.</p>
+    </div>
+    <ul>
+      <button class="warning-button" onclick="window.LimitWarning.close('OK')">OK</button>
+    </ul>
+  </dialog>
+    <script>
+      // You can also require other files to run in this process
+//      require('./renderer.js')
+      require('./rip-it-worker.js')
+    </script>
+  </body>
+</html>
