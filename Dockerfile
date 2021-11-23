@@ -60,4 +60,4 @@ RUN echo "#!/bin/bash" > /etc/X11/xinit/xserverrc \
   echo 'exec /usr/bin/X -s 0 dpms -nocursor -nolisten tcp "$@"' >> /etc/X11/xinit/xserverrc
 
 # Start Electron app using a script
-CMD ["bash", "/usr/src/app/start.sh"]
+CMD ["bash", "/usr/src/app/start.sh"]gi
